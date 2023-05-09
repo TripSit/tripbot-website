@@ -1,0 +1,97 @@
+{
+    "landing": {
+        "main": "TripSit's Discord Bot",
+        "sub": "Made with love by Team TripSit"
+    },
+    "notFound": {
+        "main": "Sorry, the page you are looking for could not be found",
+        "goHome": "Go Home"
+    },
+    "dashboard": {
+        "home": "Home",
+        "welcome": "Welcome",
+        "logs": "View Logs",
+        "donations": "Donations",
+        "default": "Default"
+    },
+    "setup": {
+        "go": "Let's go",
+        "channels": "Setup channels on discord",
+        "roles": "Setup roles on discord",
+        "permissions": "Setup permissions on discord",
+        "channelMappings": "Channel Mappings",
+        "roleMappings": "Role Mappings",
+        "channel": "Channel",
+        "role": "Role",
+        "actions": "Actions",
+        "add": "Add"
+    },
+    "commands": {
+        "edit": "Edit"
+    },
+    "featureRequest": {
+        "title": "Title",
+        "description": "Description",
+        "descPlaceholder": "Enter some long form content",
+        "onGithub": "Open issue on Github",
+        "submit": "Submit"
+    },
+    "helpWanted": {
+
+    },
+    "banAppeal": {
+        "submit": "Submit",
+        "guild": "Guild",
+        "guildPlaceholder": "What guild were you banned from?",
+        "why": "Do you know why you were banned?",
+        "whyPlaceholder": "Why were you banned?",
+        "solution": "Have you taken any steps to rectify the situation or make amends for the behavior that lead to the ban?",
+        "solutionPlaceholder": "What have you done to fix the situation?",
+        "future": "What steps will you take to ensure that you do not repeat the behavior that lead to the ban?",
+        "futurePlaceholder": "Assure the team that there won't be any issues in the future",
+        "extra": "Is there anything else you would like to add?",
+        "extraPlaceholder": "Anything else you want to say? (optional)",
+        "email": "Email (Optional)",
+        "emailPlaceholder": "If you no longer share any guild with TripBot, the bot will not be able to message you with status updates on your appeal (accepted OR rejected). In this case, please provide your email."
+    },
+    "logs": {
+        "network": "Network",
+        "refresh": "Refresh"
+    },
+    "settings": {
+        "general": "General",
+        "prefix": "Prefix",
+        "enable": "Enable",
+        "disable": "Disable",
+        "currency": "Currency",
+        "reset": "Reset"
+    },
+    "navbar": {
+        "account": "Account",
+        "settings": "Settings",
+        "logout": "Logout",
+        "messages": "Messages",
+        "warnings": "Warnings",
+        "errors": "Errors",
+        "login": "Login"
+    },
+    "sidebar": {
+        "main": "MAIN",
+        "dashboard": "Dashboard",
+        "setup": "Setup",
+        "commands": "Commands",
+        "featureRequest": "Feature Request",
+        "banAppeal": "Ban Appeal",
+        "helpWanted": "Help Wanted",
+        "misc": "MISC",
+        "logs": "Logs",
+        "controls": "Controls",
+        "settings": "Settings"
+    },
+    "footer": {
+        "terms": "Terms of Service",
+        "policy": "Privacy Policy",
+        "about": "About Us",
+        "love": "This website is based off of Rallybot's web panel. We love you Rallybot <3"
+    }
+}

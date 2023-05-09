@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  tripbot:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    container_name: tripsit_tripbot_website
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/usr/src/app
+    working_dir: /usr/src/app
+    env_file:
+      - .env

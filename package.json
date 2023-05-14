@@ -6,7 +6,8 @@
     "serve": "export SET NODE_OPTIONS=--openssl-legacy-provider && vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "docker-rebuild": "docker compose up -d --force-recreate --build"
+    "docker-rebuild": "docker compose up -d --force-recreate --build",
+    "logs": "docker container logs tripsit_tripbot_website -f -n 100"
   },
   "dependencies": {
     "chart.js": "^2.9.3",

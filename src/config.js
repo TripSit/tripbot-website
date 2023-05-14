@@ -1,10 +1,14 @@
 const CLIENT_ID = process.env.VUE_APP_CLIENT_ID;
 const BOT_API = process.env.VUE_APP_BOT_API;
+const USERNAME = process.env.VUE_APP_USERNAME;
+const PASSWORD = process.env.VUE_APP_PASSWORD;
 
 export default {
     home: `${window.location.origin}/`,
     clientId: CLIENT_ID || "",
     botApi: BOT_API || "",
+    username: USERNAME,
+    password: PASSWORD,
     tripbotApi: "https://api.tripsit.me",
     discordApi: "https://discord.com/api",
     discordCdn: "https://cdn.discordapp.com",

@@ -1,15 +1,23 @@
 version: '3.9'
 services:
-  tripbot:
+  vue:
+    container_name: tripsit_tripbot_website
+    restart: unless-stopped
     build:
       context: ./
       dockerfile: ./Dockerfile
-    container_name: tripsit_tripbot_website
-    restart: unless-stopped
     ports:
       - "8080:8080"
+    networks:
+        - frontend
+    # network_mode: host
     volumes:
       - ./:/usr/src/app
-    working_dir: /usr/src/app
     env_file:
       - .env
+    working_dir: /usr/src/app
+
+networks: 
+  frontend:
+    driver: bridge
+    name: tripbot_frontend

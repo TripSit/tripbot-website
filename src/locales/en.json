@@ -1,7 +1,7 @@
 {
     "landing": {
         "main": "TripSit's Discord Bot",
-        "sub": "Made with love by Team TripSit"
+        "sub": "Made with love by Moonbear"
     },
     "notFound": {
         "main": "Sorry, the page you are looking for could not be found",
@@ -42,15 +42,15 @@
     "banAppeal": {
         "submit": "Submit",
         "guild": "Guild",
-        "guildPlaceholder": "What guild were you banned from?",
-        "why": "Do you know why you were banned?",
-        "whyPlaceholder": "Why were you banned?",
+        "guildPlaceholder": "TripSit",
+        "reason": "Do you know why you were banned? (Required)",
+        "reasonPlaceholder": "Why were you banned?",
         "solution": "Have you taken any steps to rectify the situation or make amends for the behavior that lead to the ban?",
         "solutionPlaceholder": "What have you done to fix the situation?",
         "future": "What steps will you take to ensure that you do not repeat the behavior that lead to the ban?",
         "futurePlaceholder": "Assure the team that there won't be any issues in the future",
-        "extra": "Is there anything else you would like to add?",
-        "extraPlaceholder": "Anything else you want to say? (optional)",
+        "extra": "Is there anything else you would like to add? (Optional)",
+        "extraPlaceholder": "Anything else you want to say?",
         "email": "Email (Optional)",
         "emailPlaceholder": "If you no longer share any guild with TripBot, the bot will not be able to message you with status updates on your appeal (accepted OR rejected). In this case, please provide your email."
     },

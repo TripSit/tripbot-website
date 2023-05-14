@@ -36,7 +36,7 @@ export default {
   data() {
     return {
       guild: "",
-      why: "",
+      reason: "",
       solution: "",
       future: "",
       extra: "",
@@ -53,7 +53,7 @@ export default {
     submitRequest() {
       const obj = {
         "guild": this.guild,
-        "why": this.why,
+        "reason": this.reason,
         "solution": this.solution,
         "future": this.future,
         "extra": this.extra,
@@ -86,7 +86,7 @@ export default {
       Each guild has different response times, please be patient while this is looked into.
       `)
       this.guild = "";
-      this.why = "";
+      this.reason = "";
       this.solution = "";
       this.future = "";
       this.extra = "";

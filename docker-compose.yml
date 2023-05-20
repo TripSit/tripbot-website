@@ -1,13 +1,13 @@
 version: '3.9'
 services:
   vue:
-    container_name: tripsit_tripbot_website
+    container_name: tripsit_tripbot_website_v2
     restart: unless-stopped
     build:
       context: ./
       dockerfile: ./Dockerfile
     ports:
-      - "8080:8080"
+      - "5173:5173"
     networks:
         - frontend
     # network_mode: host

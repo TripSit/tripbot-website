@@ -1,3 +1,29 @@
+<script lang="ts">
+import { mapState } from 'pinia'
+import { useUserStore } from '@/stores/useUserStore'
+
+import Sidebar from "@/components/SidebarComponent.vue";
+import Navbar from "@/components/NavbarComponent.vue";
+import FooterComponent from "@/components/FooterComponent.vue";
+// import DashboardHome from '@/views/DashboardHome.vue';
+
+// import { FadeTransition } from 'vue3-sfc-transitions';
+
+export default {
+  name: "DashboardLayout",
+  computed: {
+    ...mapState(useUserStore, [
+      "sideBarOpen",
+    ]),
+  },
+  components: {
+    Sidebar,
+    Navbar,
+    FooterComponent,
+  },
+};
+</script>
+
 <template>
   <div class="leading-normal tracking-normal" id="main-body">
     <div class="flex flex-wrap text-gray-500 dark:text-gray-400">
@@ -11,14 +37,10 @@
         <Navbar />
 
         <div class="min-h p-6 bg-gray-200 dark:bg-gray-900">
-          <fade-transition>
-            <keep-alive include="DashboardHome,Logs,Commands" :max="3">
-              <router-view />
-            </keep-alive>
-          </fade-transition>
+          <router-view />
         </div>
 
-        <Footer />
+        <FooterComponent />
       </div>
     </div>
   </div>
@@ -30,25 +52,4 @@
 }
 </style>
 
-<script>
-import { mapState } from "vuex";
 
-import Sidebar from "@/components/Sidebar";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-
-import { FadeTransition } from "vue2-transitions";
-
-export default {
-  name: "Dashboard",
-  computed: {
-    ...mapState(["sideBarOpen"]),
-  },
-  components: {
-    Sidebar,
-    Navbar,
-    Footer,
-    FadeTransition,
-  },
-};
-</script>

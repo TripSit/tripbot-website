@@ -2,7 +2,7 @@
 # BUILD FOR LOCAL DEVELOPMENT
 ###################
 
-FROM node:20.1-alpine As development
+FROM node:20.2-alpine AS development
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -25,7 +25,7 @@ USER node
 # BUILD FOR PRODUCTION
 ###################
 
-FROM node:20.1-alpine As build
+FROM node:20.2-alpine AS build
 
 WORKDIR /usr/src/app
 
@@ -51,11 +51,17 @@ USER node
 # PRODUCTION
 ###################
 
-FROM node:20.1-alpine As production
+FROM node:20.2-alpine AS production
 
 # Copy the bundled code from the build stage to the production image
 COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 # COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 
 # Start the server using the production build
-CMD if [ $NODE_ENV = production ] ; then npm run build ; else npm run dev ; fi
+CMD if [ $NODE_ENV = production ] ; then \
+  npm run build \
+  FROM devforth/spa-to-http:latest \
+  COPY --from=builder /code/dist/ .; \
+else \
+  npm run dev; \
+fi

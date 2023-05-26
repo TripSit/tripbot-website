@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   vue:
-    container_name: tripsit_tripbot_website_v2
+    container_name: tripbot_website
     restart: unless-stopped
     build:
       context: ./
@@ -9,15 +9,14 @@ services:
     ports:
       - "5173:5173"
     networks:
-        - frontend
-    # network_mode: host
+        - tripbot-net
+    working_dir: /usr/src/app
     volumes:
       - ./:/usr/src/app
     env_file:
       - .env
-    working_dir: /usr/src/app
 
 networks: 
-  frontend:
+  tripbot-net:
     driver: bridge
-    name: tripbot_frontend
+    name: tripbot-net

@@ -1,6 +1,6 @@
 version: '3.9'
 services:
-  vue:
+  tripbot_website:
     container_name: tripbot_website
     restart: unless-stopped
     build:

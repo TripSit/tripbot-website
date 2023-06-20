@@ -1,0 +1,33 @@
+# Folders
+.vscode
+# cypress
+# public
+node_modules
+# src - This is where the code is, MUST be included in the container
+
+# Files
+.dockerignore
+# .env - We should def move to docker secrets 
+# .env.example
+# .eslintignore
+# .eslintrc
+.gitattributes
+.gitignore
+.gitpod.yml
+.prettierrc.json
+# cypress.config.ts
+# docker-compose.yml - Not needed, but is good for reference if anyone wants to inspect the container
+# Dockerfile - Same
+# env.d.ts - Seems like necessary for vite
+# index.html - The start of the program
+# package-lock.json - We need this to install the dependencies!
+# package.json - Same!
+# postcss.config.js - Some kind of vite thing?
+README.MD
+# tailwind.config.ts - Some kind of vite thing?
+# tsconfig.app.json - TS stuff
+# tsconfig.json - We need this to compile the code!
+# tsconfig.node.json - TS stuff
+# tsconfig.vitest.json - TS stuff
+# vite.config.ts - Vite stuff
+# vitest.config.ts - Vite stuff

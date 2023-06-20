@@ -11,10 +11,9 @@ Right now the dashboard is in its infancy, but it has a few features:
 
 ## Credits
 This website is built based on [Rallybot's](https://github.com/Ju99ernaut/rally-discordbot-dashboard) dashboard, which is built on **Vue 2**.
-I converted their example into **Vue 3**, which is why it looks terrible, but it's fully updated and secure!
+I converted their example into **Vue 3**, which is why it looks not-great, but it's fully updated!
 
 This project was bootstrapped with [Vite](https://vitejs.dev/) using Vue3 + TypeScript + Tailwind CSS
-
 
 ## Recommended IDE Setup
 
@@ -44,7 +43,7 @@ npm install
 ### Compile and Hot-Reload for Development
 
 ```sh
-npm run docker-rebuild
+npm run start
 ```
 
 ### Run Unit Tests with [Vitest](https://vitest.dev/)

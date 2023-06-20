@@ -35,25 +35,31 @@ CMD tail -f /dev/null
 
 FROM node:20.2-alpine AS build
 
+ENV TZ="America/Chicago"
+ENV NODE_ENV=production
+RUN date
+
 WORKDIR /usr/src/app
 
-# COPY --chown=node:node package*.json ./
-COPY package*.json ./
+COPY --chown=node:node package*.json ./
 
 # In order to run `npm run build` we need access to the Nest CLI which is a dev dependency. In the previous development stage we ran `npm ci` which installed all dependencies, so we can copy over the node_modules directory from the development image
-# COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
-COPY --from=development /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node . .
 
-# COPY --chown=node:node . .
-COPY . .
+# Do a type check to make sure
+RUN npx vue-tsc --noEmit -p tsconfig.vitest.json --composite false
 
 # Run the build command which creates the production bundle
-RUN npm run build
+RUN npx vite build
 
 # Running `npm ci` removes the existing node_modules directory and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
-RUN if [ $NODE_ENV = production ] ; then npm ci --only=production && npm cache clean --force ; fi
+RUN npm ci --only=production && npm cache clean --force
 
-USER node
+# USER node
+
+# For container development, the following command runs forever, so we can inspect the container
+CMD tail -f /dev/null
 
 ###################
 # PRODUCTION
@@ -61,18 +67,29 @@ USER node
 
 FROM node:20.2-alpine As production
 
-# Copy the bundled code from the build stage to the production image
-# COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
-# COPY --chown=node:node --from=build /usr/src/app/dist ./dist
-COPY --from=build /usr/src/app/node_modules ./node_modules
-COPY --from=build /usr/src/app/dist ./dist
+ENV TZ="America/Chicago"
+ENV NODE_ENV=production
+RUN date
 
-# Start the server using the production build
-CMD if [ $NODE_ENV = development ] ; then npm run dev ; fi
+WORKDIR /usr/src/app
+
+# Copy the bundled code from the build stage to the production image
+COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node --from=build /usr/src/app/dist ./dist
+
+# For container development, the following command runs forever, so we can inspect the container
+CMD tail -f /dev/null
 
 ###################
 # SPA to HTTP
 ###################
-FROM devforth/spa-to-http:latest
-# COPY --chown=node:node --from=development /usr/src/app/dist/ .
-COPY --from=build /usr/src/app/dist/ .
+FROM devforth/spa-to-http:latest as live
+
+ENV TZ="America/Chicago"
+ENV NODE_ENV=production
+RUN date
+
+WORKDIR /usr/src/app
+
+COPY --chown=node:node --from=production /usr/src/app/node_modules ./node_modules
+COPY --chown=node:node --from=production /usr/src/app/dist ./dist

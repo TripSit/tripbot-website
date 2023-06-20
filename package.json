@@ -1,8 +1,20 @@
 {
-  "name": "tripbot-website",
-  "version": "0.0.0",
-  "private": true,
+  "name": "tripbot_website",
+  "version": "1.0.0",
+  "description": "A website for TripBot",
+  "main": "main.ts",
+  "engines": {
+    "node": "v20.2.0",
+    "npm": "9.6.6"
+  },
   "scripts": {
+    "start": "docker compose up -d --force-recreate --build",
+    "logs": "docker container logs tripbot_website -f -n 100",
+    "test": "docker exec -it tripbot_website jest --silent -c ./jest/jest.unit.config.ts",
+    "lint": "docker exec -it tripbot_website eslint --fix --ext .ts,.js .",
+    "deploy": "docker exec -it tripbot_website ts-node --transpile-only ./src/discord/utils/commandDeploy.ts",
+    "stop": "docker stop tripbot_website",
+    "# Legacy #": "",
     "dev": "vite --host",
     "build": "run-p type-check build-only",
     "preview": "vite preview",
@@ -11,11 +23,28 @@
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'",
     "build-only": "vite build",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "legacy-lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
     "format": "prettier --write src/",
     "docker-rebuild": "docker compose up -d --force-recreate --build",
-    "logs": "docker container logs tripbot_website -f -n 100"
+    "legacy-logs": "docker container logs tripbot_website -f -n 100"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TripSit/tripbot-website"
+  },
+  "keywords": [
+    "Harm",
+    "Reduction",
+    "Bot",
+    "Website"
+  ],
+  "author": "Eric / Moonbear / Teknos <eric@tripsit.me>",
+  "contributors": [],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/TripSit/tripbot-website/issues"
+  },
+  "homepage": "https://github.com/TripSit/tripbot-website#readme",
   "dependencies": {
     "@intlify/unplugin-vue-i18n": "^0.10.0",
     "color": "^4.2.3",

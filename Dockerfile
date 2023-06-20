@@ -4,6 +4,10 @@
 
 FROM node:20.2-alpine AS development
 
+ENV TZ="America/Chicago"
+ENV NODE_ENV=development
+RUN date
+
 # Create app directory
 WORKDIR /usr/src/app
 
@@ -11,16 +15,19 @@ WORKDIR /usr/src/app
 # A wildcard is used to ensure copying both package.json AND package-lock.json (when available).
 # Copying this first prevents re-running npm install on every code change.
 # COPY --chown=node:node package*.json ./
-COPY package*.json ./
+COPY --chown=node:node package*.json ./
+
 # Install app dependencies using the `npm ci` command instead of `npm install`
 RUN npm ci
 
 # Bundle app source
-# COPY --chown=node:node . .
-COPY . .
+COPY --chown=node:node . .
 
 # Use the node user from the image (instead of the root user)
 # USER node
+
+# For container development, the following command runs forever, so we can inspect the container
+CMD tail -f /dev/null
 
 ###################
 # BUILD FOR PRODUCTION
@@ -62,6 +69,10 @@ COPY --from=build /usr/src/app/dist ./dist
 
 # Start the server using the production build
 CMD if [ $NODE_ENV = development ] ; then npm run dev ; fi
+
+###################
+# SPA to HTTP
+###################
 FROM devforth/spa-to-http:latest
 # COPY --chown=node:node --from=development /usr/src/app/dist/ .
 COPY --from=build /usr/src/app/dist/ .

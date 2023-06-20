@@ -6,17 +6,24 @@ services:
     build:
       context: ./
       dockerfile: ./Dockerfile
+      # Only will build development stage from our dockerfile
+      target: development
     ports:
       - "5173:5173"
     networks:
-        - tripbot-net
+      - tripbot-net
     working_dir: /usr/src/app
     volumes:
       - ./:/usr/src/app
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     env_file:
       - .env
+    environment:
+      - TZ=America/Chicago
+    # Run a command against the development stage of the image
+    command: npx vite --host
 
 networks: 
   tripbot-net:
-    driver: bridge
     name: tripbot-net

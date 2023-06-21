@@ -24,10 +24,10 @@ RUN npm ci
 COPY --chown=node:node . .
 
 # Use the node user from the image (instead of the root user)
-# USER node
+USER node
 
 # For container development, the following command runs forever, so we can inspect the container
-CMD tail -f /dev/null
+# CMD tail -f /dev/null
 
 ###################
 # BUILD FOR PRODUCTION
@@ -56,43 +56,22 @@ RUN npx vite build
 # Running `npm ci` removes the existing node_modules directory and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
 RUN npm ci --only=production && npm cache clean --force
 
-# USER node
+USER node
 
 # For container development, the following command runs forever, so we can inspect the container
-CMD tail -f /dev/null
-
-# ###################
-# # PRODUCTION
-# ###################
-
-# FROM node:20.2-alpine As production
-
-# ENV TZ="America/Chicago"
-# ENV NODE_ENV=production
-# RUN date
-
-# WORKDIR /usr/src/app
-
-# # Copy the bundled code from the build stage to the production image
-# COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
-# COPY --chown=node:node --from=build /usr/src/app/dist ./dist
-
-# # For container development, the following command runs forever, so we can inspect the container
 # CMD tail -f /dev/null
 
 ###################
-# SPA to HTTP
+# SPA to HTTP - PRODUCTION
 ###################
 FROM devforth/spa-to-http:latest as live
 
-# ENV TZ="America/Chicago"
-# ENV NODE_ENV=production
-# RUN date
+ENV TZ="America/Chicago"
+ENV NODE_ENV=production
+RUN date
 
-# WORKDIR /usr/src/app
+WORKDIR /usr/src/app
 
-# COPY --chown=node:node --from=production /usr/src/app/node_modules ./node_modules
-# COPY --chown=node:node --from=production /usr/src/app/dist ./dist
+COPY --from=build /usr/src/app/dist .
 
-COPY --from=build /usr/src/app/node_modules ./node_modules
-COPY --from=build /usr/src/app/dist ./dist
+# USER node

@@ -61,35 +61,38 @@ RUN npm ci --only=production && npm cache clean --force
 # For container development, the following command runs forever, so we can inspect the container
 CMD tail -f /dev/null
 
-###################
-# PRODUCTION
-###################
+# ###################
+# # PRODUCTION
+# ###################
 
-FROM node:20.2-alpine As production
+# FROM node:20.2-alpine As production
 
-ENV TZ="America/Chicago"
-ENV NODE_ENV=production
-RUN date
+# ENV TZ="America/Chicago"
+# ENV NODE_ENV=production
+# RUN date
 
-WORKDIR /usr/src/app
+# WORKDIR /usr/src/app
 
-# Copy the bundled code from the build stage to the production image
-COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
-COPY --chown=node:node --from=build /usr/src/app/dist ./dist
+# # Copy the bundled code from the build stage to the production image
+# COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
+# COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 
-# For container development, the following command runs forever, so we can inspect the container
-CMD tail -f /dev/null
+# # For container development, the following command runs forever, so we can inspect the container
+# CMD tail -f /dev/null
 
 ###################
 # SPA to HTTP
 ###################
 FROM devforth/spa-to-http:latest as live
 
-ENV TZ="America/Chicago"
-ENV NODE_ENV=production
-RUN date
+# ENV TZ="America/Chicago"
+# ENV NODE_ENV=production
+# RUN date
 
-WORKDIR /usr/src/app
+# WORKDIR /usr/src/app
 
-COPY --chown=node:node --from=production /usr/src/app/node_modules ./node_modules
-COPY --chown=node:node --from=production /usr/src/app/dist ./dist
+# COPY --chown=node:node --from=production /usr/src/app/node_modules ./node_modules
+# COPY --chown=node:node --from=production /usr/src/app/dist ./dist
+
+COPY --from=build /usr/src/app/node_modules ./node_modules
+COPY --from=build /usr/src/app/dist ./dist

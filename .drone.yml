@@ -3,15 +3,6 @@ kind: pipeline
 name: default
 
 steps:
-  # - name: build-and-restart
-  #   image: docker
-  #   network_mode: socket-net
-  #   privileged: true
-  #   environment:
-  #     DOCKER_HOST: tcp://socket-proxy:2375
-  #   commands:
-  #     # - docker compose up tripbot_website --force-recreate --build --remove-orphans
-  #     - tail -f /dev/null
   - name: build-and-restart
     image: docker:dind
     network_mode: socket-net
@@ -19,5 +10,6 @@ steps:
     environment:
       DOCKER_HOST: tcp://socket-proxy:2375
     commands:
-      - docker compose up tripbot_website --force-recreate --build --remove-orphans
-      # - tail -f /dev/null
+      - docker ps -a
+      # - docker compose up tripbot_website --force-recreate --build --remove-orphans
+      - tail -f /dev/null

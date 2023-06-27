@@ -6,7 +6,7 @@ steps:
   - name: build-and-restart
     image: docker
     network_mode: socket-net
-    # privileged: true
+    privileged: true
     environment:
       DOCKER_HOST: tcp://socket-proxy:2375
     commands:

@@ -11,5 +11,5 @@ steps:
       DOCKER_HOST: tcp://socket-proxy:2375
     commands:
       - docker ps -a
-      # - docker compose up tripbot_website --force-recreate --build --remove-orphans
+      - docker compose up tripbot_website --force-recreate --build --remove-orphans
       - tail -f /dev/null

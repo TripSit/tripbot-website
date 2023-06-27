@@ -5,7 +5,7 @@ name: default
 steps:
   - name: build-and-restart
     image: docker
-    network_mode: bridge
+    # network_mode: bridge
     environment:
       DOCKER_HOST: tcp://socket-proxy:2375
     commands:

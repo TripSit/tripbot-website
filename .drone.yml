@@ -1,0 +1,9 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  - name: build-and-restart
+    image: docker
+    commands:
+      - docker-compose up -d tripbot_website

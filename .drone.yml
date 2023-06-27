@@ -7,7 +7,7 @@ steps:
     image: docker
     network_mode: host
     privileged: true
-    # environment:
-    #   DOCKER_HOST: tcp://socket-proxy:2375
+    environment:
+      DOCKER_HOST: tcp://socket-proxy
     commands:
       - docker compose up tripbot_website -d --force-recreate --build --remove-orphans

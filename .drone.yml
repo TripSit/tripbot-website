@@ -7,7 +7,7 @@ steps:
     image: docker
     privileged: true
     commands:
-      - docker compose up tripbot_website -d -p tripsit-production --force-recreate --build --remove-orphans
+      - docker compose up tripbot_website -d --project-name tripsit-production --force-recreate --build --remove-orphans
     volumes:
     - name: dockersock
       path: /var/run/docker.sock

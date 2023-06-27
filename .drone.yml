@@ -13,3 +13,8 @@ steps:
       - docker ps -a
       - docker compose up tripbot_website --force-recreate --build --remove-orphans
       - tail -f /dev/null
+
+services:
+- name: docker
+  image: docker:dind
+  privileged: true

@@ -21,5 +21,5 @@ volumes:
     path: /var/run/docker.sock
 - name: dockercompose
   host:
-    path: /home/moonbear/tripsit-prod/docker-compose.host.yml
+    path: /home/moonbear/tripsit-prod/docker-compose.yml
 

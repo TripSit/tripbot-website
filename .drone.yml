@@ -4,17 +4,27 @@ name: default
 
 steps:
   - name: build-and-restart
-    image: docker:dind
-    network_mode: socket-net
+    # image: docker:dind
+    image: docker
+    # network_mode: socket-net
     privileged: true
-    environment:
-      DOCKER_HOST: tcp://socket-proxy:2375
+    # environment:
+    #   DOCKER_HOST: tcp://socket-proxy:2375
     commands:
       - docker ps -a
       - docker compose up tripbot_website --force-recreate --build --remove-orphans
       - tail -f /dev/null
+    volumes:
+    - name: dockersock
+      path: /var/run/docker.sock
 
-services:
-- name: docker
-  image: docker:dind
-  privileged: true
+
+volumes:
+- name: dockersock
+  host:
+    path: /var/run/docker.sock
+
+# services:
+# - name: docker
+#   image: docker:dind
+#   privileged: true

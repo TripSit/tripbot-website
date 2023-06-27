@@ -6,7 +6,8 @@ steps:
   - name: build-and-restart
     image: docker
     network_mode: bridge
+    privileged: true
     environment:
       DOCKER_HOST: tcp://socket-proxy:2375
     commands:
-      - docker-compose up -d tripbot_website
+      - docker compose up tripbot_website -d --force-recreate --build --remove-orphans

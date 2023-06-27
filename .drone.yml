@@ -13,7 +13,7 @@ steps:
     - name: dockersock
       path: /var/run/docker.sock
     - name: dockercompose
-      path: /docker-compose.host.yml
+      path: /
       
 volumes:
 - name: dockersock

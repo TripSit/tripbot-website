@@ -5,9 +5,9 @@ name: default
 steps:
   - name: build-and-restart
     image: docker
-    network_mode: host
+    network_mode: bridge
     privileged: true
     environment:
-      DOCKER_HOST: tcp://socket-proxy
+      DOCKER_HOST: tcp://socket-proxy:2375
     commands:
       - docker compose up tripbot_website -d --force-recreate --build --remove-orphans

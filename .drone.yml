@@ -7,6 +7,6 @@ steps:
     image: docker
     network_mode: bridge
     environment:
-      DOCKER_HOST: tcp://socket-proxy:2375
+      DOCKER_HOST: socket-proxy:2375
     commands:
       - docker compose up tripbot_website -d --force-recreate --build --remove-orphans

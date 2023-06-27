@@ -6,6 +6,6 @@ steps:
   - name: build-and-restart
     image: docker
     environment:
-      - DOCKER_HOST=tcp://docker-socket-proxy-host:2375
+      DOCKER_HOST: tcp://docker-socket-proxy-host:2375
     commands:
       - docker-compose up -d tripbot_website

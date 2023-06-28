@@ -7,11 +7,11 @@ steps:
     image: docker
     privileged: true
     commands:
-      # - docker compose -f docker-compose.host.yml --project-name tripsit-live up tripbot_website -d --force-recreate --build
       - apk update
       - apk upgrade
       - apk add --no-cache git
-      - tail -f /dev/null
+      - docker compose -f docker-compose.host.yml --project-name tripsit-live up tripbot_website -d --force-recreate --build
+      # - tail -f /dev/null
     # volumes:
     # - name: dockersock
     #   path: /var/run/docker.sock

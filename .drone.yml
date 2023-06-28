@@ -12,14 +12,14 @@ steps:
     volumes:
     - name: dockersock
       path: /var/run/docker.sock
-    - name: dockercompose
-      path: /drone/src/docker-compose.host.yml
+    # - name: dockercompose
+    #   path: /drone/src/docker-compose.host.yml
       
 volumes:
 - name: dockersock
   host:
-    path: /var/run/docker.sock
-- name: dockercompose
-  host:
-    path: /home/moonbear/tripsit-prod/docker-compose.yml
+#     path: /var/run/docker.sock
+# - name: dockercompose
+#   host:
+#     path: /home/moonbear/tripsit-prod/docker-compose.yml
 

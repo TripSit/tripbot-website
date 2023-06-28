@@ -3,18 +3,14 @@ type: docker
 name: default
 
 steps:
-  - name: build-and-restart
+  - name: Rebuild Website
     image: docker
     privileged: true
     commands:
-      # - apk update
-      # - apk upgrade
-      # - apk add --no-cache git
+      - apk update
+      - apk upgrade
+      - apk add --no-cache git
       - docker compose -f docker-compose.host.yml --project-name tripsit-live up tripbot_website -d --force-recreate --build
-      # - tail -f /dev/null
-    # volumes:
-    # - name: dockersock
-    #   path: /var/run/docker.sock
     environment:
       NODE_ENV:
         from_secret: NODE_ENV
@@ -69,14 +65,3 @@ steps:
         {{else}}
           View failed job: {{build.link}}
         {{/success}}
-
-
-
-# volumes:
-# - name: dockersock
-#   host:
-#     path: /var/run/docker.sock
-# - name: dockercompose
-#   host:
-#     path: /home/moonbear/tripsit-prod/docker-compose.yml
-

@@ -12,8 +12,9 @@ steps:
     volumes:
     - name: dockersock
       path: /var/run/docker.sock
-    # - name: dockercompose
-    #   path: /drone/src/docker-compose.host.yml 
+    environment:
+      USERDIR:
+        from_secret: USERDIR
       
 volumes:
 - name: dockersock

@@ -13,8 +13,30 @@ steps:
     - name: dockersock
       path: /var/run/docker.sock
     environment:
+      NODE_ENV:
+        from_secret: NODE_ENV
+      XID:
+        from_secret: XID
+      PUID:
+        from_secret: PUID
+      PGID:
+        from_secret: PGID
+      TIME_ZONE:
+        from_secret: TIME_ZONE
+      TZ:
+        from_secret: TZ
       USERDIR:
         from_secret: USERDIR
+      DOCKERDIR:
+        from_secret: DOCKERDIR
+      SECRETSDIR:
+        from_secret: SECRETSDIR
+      LOCAL_MOUNT:
+        from_secret: LOCAL_MOUNT
+      DNS_DOMAIN:
+        from_secret: DNS_DOMAIN
+      OTHER_DOMAIN:
+        from_secret: OTHER_DOMAIN
       
 volumes:
 - name: dockersock

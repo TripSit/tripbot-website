@@ -7,11 +7,14 @@ steps:
     image: docker
     privileged: true
     commands:
-      # - apk update
-      # - apk upgrade
-      # - apk add --no-cache git
-      # - docker compose -f docker-compose.host.yml --project-name tripsit-live up tripbot_website -d --force-recreate --build
-      - tail -f /dev/null
+      - apk update
+      - apk upgrade
+      - apk add --no-cache git
+      - docker compose -f docker-compose.host.yml --project-name tripsit-live up tripbot_website -d --force-recreate --build
+      # - tail -f /dev/null
+    volumes:
+      - name: env
+        path: /.env
     environment:
       NODE_ENV:
         from_secret: NODE_ENV
@@ -71,3 +74,8 @@ trigger:
 trigger:
   event:
   - push
+
+volumes:
+- name: env
+  host:
+    path: /.env

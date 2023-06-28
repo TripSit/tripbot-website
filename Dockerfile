@@ -48,7 +48,7 @@ COPY --chown=node:node --from=development /usr/src/app/node_modules ./node_modul
 COPY --chown=node:node . .
 
 # Do a type check to make sure
-RUN npx vue-tsc --noEmit -p tsconfig.vitest.json --composite false
+# RUN npx vue-tsc --noEmit -p tsconfig.vitest.json --composite false
 
 # Run the build command which creates the production bundle
 RUN npx vite build

@@ -53,8 +53,8 @@ COPY --chown=node:node . .
 # Run the build command which creates the production bundle
 RUN npx vite build
 
-# Running `npm ci` removes the existing node_modules directory and passing in --only=production ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
-RUN npm ci --only=production && npm cache clean --force
+# Running `npm ci` removes the existing node_modules directory and passing in --omit=dev ensures that only the production dependencies are installed. This ensures that the node_modules directory is as optimized as possible
+RUN npm ci --omit=dev && npm cache clean --force
 
 USER node
 

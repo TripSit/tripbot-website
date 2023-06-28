@@ -7,9 +7,9 @@ steps:
     image: docker
     privileged: true
     commands:
-      - apk update
-      - apk upgrade
-      - apk add --no-cache git
+      # - apk update
+      # - apk upgrade
+      # - apk add --no-cache git
       - docker compose -f docker-compose.host.yml --project-name tripsit-live up tripbot_website -d --force-recreate --build
       # - tail -f /dev/null
     # volumes:
@@ -44,7 +44,34 @@ steps:
         from_secret: DOCKER_HOST
       DOCKER_BUILDKIT:
         from_secret: DOCKER_BUILDKIT
-      
+
+  - name: discord notification
+    image: appleboy/drone-discord
+    settings:
+      webhook_id: 1123644407434973255
+      webhook_token: 73CXRJKNIwOUHyiVWQiJ4lxUllY2__BMH_lIrB6_XdTDH7dAPk0b_MZ3-TQAXiAj7cH6
+      avatar_url: https://readme.drone.io/logo.svg
+      username: 'Drone CI'
+      # when:
+      #   status: [ success, failure ]
+      message: |
+        {{#success build.status}}
+          Build {{build.number}} succeeded.
+        {{else}}
+          Build {{build.number}} failed.
+        {{/success}}
+        Build time: {{build.started}}
+        Commit message: {{commit.message}}
+        Commit author: {{commit.author}}
+        Commit branch: {{commit.branch}}
+        {{#success build.status}}
+          View logs: {{build.link}}
+        {{else}}
+          View failed job: {{build.link}}
+        {{/success}}
+
+
+
 # volumes:
 # - name: dockersock
 #   host:

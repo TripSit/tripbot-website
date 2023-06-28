@@ -39,6 +39,8 @@ steps:
         from_secret: OTHER_DOMAIN
       DOCKER_HOST:
         from_secret: DOCKER_HOST
+      DOCKER_BUILDKIT:
+        from_secret: DOCKER_BUILDKIT
       
 # volumes:
 # - name: dockersock

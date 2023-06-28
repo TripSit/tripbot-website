@@ -37,6 +37,8 @@ steps:
         from_secret: DNS_DOMAIN
       OTHER_DOMAIN:
         from_secret: OTHER_DOMAIN
+      DOCKER_HOST:
+        from_secret: DOCKER_HOST
       
 volumes:
 - name: dockersock

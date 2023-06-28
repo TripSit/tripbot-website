@@ -63,3 +63,10 @@ steps:
         {{else}}
           View failed job: <{{build.link}}>
         {{/success}}
+
+trigger:
+  branch:
+  - main
+trigger:
+  event:
+  - push

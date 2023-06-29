@@ -2,7 +2,7 @@
 # BUILD FOR LOCAL DEVELOPMENT
 ###################
 
-FROM node:20.2-alpine AS development
+FROM node:20.2 AS development
 
 ENV TZ="America/Chicago"
 ENV NODE_ENV=development

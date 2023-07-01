@@ -33,7 +33,7 @@ services:
     profiles: ["apps", "frontend", "tripbot", "all"]
     working_dir: /usr/src/app
     ports:
-      - "8080:8080"
+      - "8080:5173"
     networks:
       - tripbot-net
     env_file:
@@ -53,8 +53,8 @@ services:
     - com.centurylinklabs.watchtower.enable=true
     - traefik.enable=true
     - traefik.docker.network=tripbot-net
-    - traefik.http.services.tripbot_website-svc.loadbalancer.server.port=8080
-    - traefik.http.routers.tripbot_website-rtr.rule=Host(`tripbot.${DNS_DOMAIN}`, `${OTHER_DOMAIN}`)
+    - traefik.http.services.tripbot_website-svc.loadbalancer.server.port=5173
+    - traefik.http.routers.tripbot_website-rtr.rule=Host(`tripbot.${DNS_DOMAIN}`)
     - traefik.http.routers.tripbot_website-rtr.service=tripbot_website-svc
     - traefik.http.routers.tripbot_website-rtr.entrypoints=web
     # - traefik.http.routers.tripbot_website-rtr.tls=true

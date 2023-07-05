@@ -17,7 +17,7 @@ body::-webkit-scrollbar {
 }
 
 /* 1024 -1 so it doesnt show when it hits 1024px */
-@media only screen and (max-width: 1023px) {
+@media only screen and (max-width: 1920px) {
     .overlay:after {
         content: " ";
         z-index: 29;

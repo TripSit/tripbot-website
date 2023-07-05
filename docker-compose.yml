@@ -33,7 +33,7 @@ services:
     profiles: ["apps", "frontend", "tripbot", "all"]
     working_dir: /usr/src/app
     ports:
-      - "8080:5173"
+      - "5173:5173"
     networks:
       - tripbot-net
     env_file:

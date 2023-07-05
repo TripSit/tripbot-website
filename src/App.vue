@@ -65,8 +65,28 @@ export default {
 </script>
 
 <template>
-  <div id="app" :class="dark ? 'theme-dark' : ''">
-    <RouterView />
-  </div>
+  <div class="area" >
+            <ul class="circles">
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+            </ul>
+            <div>
+              <div id="app" :class="dark ? 'theme-dark' : ''">
+                <RouterView />
+              </div>
+            </div>
+    </div >
 </template>
 

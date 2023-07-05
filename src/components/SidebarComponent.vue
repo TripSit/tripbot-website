@@ -67,7 +67,7 @@ export default {
                 src="@/assets/flame.png"
                 class="w-12 h-12 bg-gray-300 dark:bg-gray-900 rounded-full shadow-lg"
               />
-              <p class="font-semibold pl-4">TripBot</p>
+              <div class="w-12 h-12 flex items-center"><div class="glowing-btn"><span class="glowing-txt">TR<span class="faulty-letter">I</span>PS<span class="faulty-letter">I</span>T</span></div></div>
             </template>
           </div>
 

@@ -1,7 +1,7 @@
 {
     "landing": {
         "main": "TripSit's Discord Bot",
-        "sub": "Made with love by Moonbear"
+        "sub": "Made with ❤️ by Moonbear"
     },
     "notFound": {
         "main": "Sorry, the page you are looking for could not be found",
@@ -93,6 +93,6 @@
         "terms": "Terms of Service",
         "policy": "Privacy Policy",
         "about": "About Us",
-        "love": "Made with love by Moonbear"
+        "love": "Made with ❤️ by Moonbear"
     }
 }

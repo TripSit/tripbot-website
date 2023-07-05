@@ -1,7 +1,7 @@
 {
     "landing": {
         "main": "TripSit's Discord Bot",
-        "sub": "Made with love by Moonbear"
+        "sub": "Made with ❤️ by Moonbear"
     },
     "notFound": {
         "main": "Sorry, the page you are looking for could not be found",
@@ -12,7 +12,8 @@
         "welcome": "Welcome",
         "logs": "View Logs",
         "donations": "Donations",
-        "default": "Default"
+        "default": "Default",
+        "intro": "TripBot is a bot develped by Moonbear of TripSit with the goal of providing harm reduction tools to the greater discord universe.\nThe bot is prepetually in BETA mode, and is subject to change at any time, but we do our best to not cause problems.\nThis page is brand-new (May 9th 2023) and there are not a lot of web-developers on the team, so it's super basic.\nThink you can make a better page? Please do! Check out the Help Wanted section in the sidebar."
     },
     "setup": {
         "go": "Let's go",
@@ -91,6 +92,7 @@
     "footer": {
         "terms": "Terms of Service",
         "policy": "Privacy Policy",
-        "about": "About Us"
+        "about": "About Us",
+        "love": "Made with ❤️ by Moonbear"
     }
 }

@@ -2,6 +2,7 @@
 
 #app {
   min-width: 100vw;
+  padding: 2rem;
   margin: 0 auto;
   font-weight: normal;
 }

@@ -13,14 +13,25 @@ export default {
     return {t, userStore};
   },
   computed: {
-    ...mapState(useUserStore, ["user", "stateParam", "ifAuthenticated"]),
+    ...mapState(useUserStore, [
+      "sideBarOpen",
+      "dark",
+      "user", 
+      "stateParam", 
+      "ifAuthenticated"
+    ]),
     state():string {
-      return this.stateParam as string;
+      return this.stateParam
     },
-    username():string {
-      return this.userStore.user
-        ? `${this.userStore.user.username}#${this.userStore.user.discriminator}`
+    username() {
+      return this.user
+        ? `${this.user.username}#${this.user.discriminator}`
         : "Anonymous";
+    },
+    avatar() {
+      return this.user
+        ? `${this.cdn}/avatars/${this.user.id}/${this.user.avatar}.png`
+        : "";
     },
     loginUrl():string {
       const loginParams = {
@@ -28,7 +39,7 @@ export default {
         redirect_uri: config.home,
         response_type: "token",
         scope: "identify guilds",
-        state: JSON.stringify(this.userStore.user),
+        state: this.stateParam as string,
       };
       return `${config.discordApi}/oauth2/authorize${queryString(loginParams)}`;
     },

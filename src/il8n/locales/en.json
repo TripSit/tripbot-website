@@ -41,6 +41,10 @@
 
     },
     "banAppeal": {
+        "instructions": "Welcome to TripSit's Ban Appeal page!\n We've detected that you are currently banned from TripSit, fill out the form below to appeal your ban.\n Please be as detailed as possible, you can only submit one appeal per ban, so make it count!\n It takes 24 hours before anyone is able to accept your appeal\n You can check back here to see the status of your appeal after the initial 24 hours, however, sometimes it takes longer than this.\n If there is no update after a week, checking this page will send a reminder to the team",
+        "notBanned": "You are not currently banned from TripSit! Congrats!",
+        "hasActiveAppealed": "You have already appealed this ban, please wait for a response from the team! This will take at least 24 hours, but may take longer.",
+        "hasAppealedBefore": "This account has appealed a ban before, you can try again, but if the situation has not changed, don't expect the outcome to change.",
         "submit": "Submit",
         "guild": "Guild",
         "guildPlaceholder": "TripSit",

@@ -3,9 +3,9 @@
   - Add captcha (google recaptcha)
   - Add email confirmation (have them click the link in the email)
   - Remove dev placeholder stuff
-  "it will be a minumum of 24 hours before it can be accepted"
-  Make the toast stay up longer
-  Have appeal status show on web page
+  - Make the toast stay up longer
+  - Have appeal status show on web page
+  - Auto pull appeal status on web page load (automation in general)
 -->
 
 <script lang="ts">
@@ -47,13 +47,16 @@ export default {
   data() {
     return {
       selectedOption: "960606557622657026",
-      reason: "Reason",
-      solution: `Solution`,
-      future: "Future",
-      extra: "Extra",
-      email: "test@test.com",
+      reason: undefined as string | undefined,
+      solution: undefined as string | undefined,
+      future: undefined as string | undefined,
+      extra: undefined as string | undefined,
+      email: undefined as string | undefined,
       attempt: 0,
       cdn: config.discordCdn,
+      isBanned: false as boolean,
+      hasAppealed: false as boolean,
+      hasActiveAppeal: false as boolean,
       // selectedOption: null,
       // reason: "",
       // solution: "",
@@ -61,12 +64,17 @@ export default {
       // extra: "",
       // email: "",
       issues: `${config.githubHome}/issues`,
-      dropdownOptions: [
-        { label: 'TripSit', value: '960606557622657026' },
-        { label: 'Bluelight.org', value: '867876356304666635' },
-        { label: 'r/Drugs', value: '1009038673284714526' }
-      ]
+      // dropdownOptions: [
+      //   { label: 'TripSit', value: '960606557622657026' },
+      //   { label: 'Bluelight.org', value: '867876356304666635' },
+      //   { label: 'r/Drugs', value: '1009038673284714526' }
+      // ]
     };
+  },
+  async created() {
+    // await this.userData; // Resolve the Promise and store the result
+    await this.appealData; // Resolve the Promise and store the result
+    await this.discordBan; // Resolve the Promise and store the result
   },
   computed: {
     ...mapState(useUserStore, [
@@ -77,9 +85,107 @@ export default {
         ? `${this.cdn}/avatars/${this.user.id}/${this.user.avatar}.png`
         : "";
     },
+    async userData() {
+      const userApiResponse = await fetch(
+          "http://localhost:5000/v2/users/" + this.user?.id,
+          {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              "Content-Type": 'application/json',
+              'Authorization': `Basic ${btoa(`${config.dbApiUsername}:${config.dbApiPassword}`)}`,
+            },
+            // body: JSON.stringify(appealData),
+          }
+        );
+        const userData = await userApiResponse.json() as Users;
+        // console.log(`userData: ${JSON.stringify(userData, null, 2)}`);
+        return userData;
+    },
+    async appealData() {
+      const appealApiResponse = await fetch(
+          "http://localhost:5000/v2/appeals/" + (await this.userData).id,
+          {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              "Content-Type": 'application/json',
+              'Authorization': `Basic ${btoa(`${config.dbApiUsername}:${config.dbApiPassword}`)}`,
+            },
+            // body: JSON.stringify(appealData),
+          }
+        )
+        const appealData = await appealApiResponse.json() as Appeals[];
+        if (appealData.length > 0) {
+          this.hasAppealed = true
+          console.log(`User has appealed: ${this.hasAppealed}`)
+          const activeAppeal = appealData.find(appeal => appeal.status === 'OPEN' || appeal.status === 'RECEIVED');
+          if (activeAppeal) {
+            this.hasActiveAppeal = true
+            this.reason = activeAppeal.reason;
+            this.solution = activeAppeal.solution;
+            this.future = activeAppeal.future;
+            this.extra = activeAppeal.extra === null ? undefined : appealData[0].extra as string;
+          }
+          // console.log(`appealData: ${JSON.stringify(appealData, null, 2)}`);
+        }
+
+        return appealData;
+    },
+    async discordBan() {
+      const discordApiResponse = await fetch(
+          "http://localhost:5000/v2/discord/bans/" + this.user?.id,
+          {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              "Content-Type": 'application/json',
+              'Authorization': `Basic ${btoa(`${config.dbApiUsername}:${config.dbApiPassword}`)}`,
+            },
+            // body: JSON.stringify(appealData),
+          }
+        )
+        const banData = await discordApiResponse.json();
+        // console.log(`banData: ${JSON.stringify(banData, null, 2)}`);
+        this.isBanned = banData.message !== 'Unknown Ban';
+        return banData;
+    },
+    async submitAppeal() {
+      
+    },
   },
   methods: {
-    async sendAppeal(newAppealData:Appeal) {
+    async sendAppeal() {
+      // console.log(`${JSON.stringify(this.$data)}`);
+      if (!this.selectedOption) return this.$toast.warning("Please select a guild")
+      if (!this.reason) return this.$toast.warning("Please enter a reason for the ban. If you don't know why you were banned, say so.")
+      if (!this.solution) return this.$toast.warning("Please enter a solution for the problem.")
+      if (!this.future) return this.$toast.warning("Please enter a future plan to prevent this from happening again.")
+      if (!this.user) return this.$toast.warning("Please login to submit an appeal.")
+      if (this.email) {
+        // Verify that the email is in the correct format
+        // https://stackoverflow.com/a/46181/1366033
+        const emailRegex = /\S+@\S+\.\S+/;
+        if (!emailRegex.test(this.email)) {
+          return this.$toast.warning("Please enter a valid email")
+        }
+      }
+
+      const newAppealData = {
+        'guild': this.selectedOption,
+        'userId': this.user.id,
+        'username': this.user.username,
+        'discriminator': this.user.discriminator,
+        'avatar': this.avatar,
+        'reason': this.reason,
+        'solution': this.solution,
+        'future': this.future,
+        'extra': this.extra,
+        'email': this.email,
+      } as Appeal;
+
+      // console.log(JSON.stringify(appealData))
+
       try {
         // console.log(`newAppealData: ${JSON.stringify(newAppealData, null, 2)}`)
         // This function handles sending the appeal, including errors
@@ -102,63 +208,13 @@ export default {
         // --- If this is appeal X, let them know they can appeal again in X months.
         // = Send the appeal to tripbot
 
-        const userApiResponse = await fetch(
-          "http://localhost:5000/v2/users/" + this.user?.id,
-          {
-            method: 'GET',
-            headers: {
-              'Accept': 'application/json',
-              "Content-Type": 'application/json',
-              'Authorization': `Basic ${btoa(`${config.dbApiUsername}:${config.dbApiPassword}`)}`,
-            },
-            // body: JSON.stringify(appealData),
-          }
-        );
-        const userData = await userApiResponse.json() as Users;
-        // console.log(`userData: ${JSON.stringify(userData, null, 2)}`);
+        const appealData = await this.appealData;
 
-        const appealApiResponse = await fetch(
-          "http://localhost:5000/v2/appeals/" + userData.id,
-          {
-            method: 'GET',
-            headers: {
-              'Accept': 'application/json',
-              "Content-Type": 'application/json',
-              'Authorization': `Basic ${btoa(`${config.dbApiUsername}:${config.dbApiPassword}`)}`,
-            },
-            // body: JSON.stringify(appealData),
-          }
-        )
-        const appealData = await appealApiResponse.json() as Appeals[];
-        // console.log(`appealData: ${JSON.stringify(appealData, null, 2)}`);
-        
-        if (appealData.length > 0) {
-          this.$toast.success(`You already have an existing appeal!`)
-        }
-
-        const discordApiResponse = await fetch(
-          "http://localhost:5000/v2/discord/bans/" + this.user?.id,
-          {
-            method: 'GET',
-            headers: {
-              'Accept': 'application/json',
-              "Content-Type": 'application/json',
-              'Authorization': `Basic ${btoa(`${config.dbApiUsername}:${config.dbApiPassword}`)}`,
-            },
-            // body: JSON.stringify(appealData),
-          }
-        )
-        const banData = await discordApiResponse.json();
-        // console.log(`banData: ${JSON.stringify(banData, null, 2)}`);
-
-        if (banData.message === 'Unknown Ban') {
-          this.$toast.success(`You are not currently banned!`)
-          return;
-        }
+        const banData = await this.discordBan;
 
         const appealPayload = {
           newAppealData,
-          userData,
+          userData: await this.userData,
           appealData,
           banData,
         }
@@ -175,8 +231,8 @@ export default {
             body: JSON.stringify(appealPayload),
           }
         )
-        const tripbotData = await tripbotApiResponse.json();
-        console.log(`tripbotData: ${JSON.stringify(tripbotData, null, 2)}`);
+        // const tripbotData = await tripbotApiResponse.json();
+        // console.log(`tripbotData: ${JSON.stringify(tripbotData, null, 2)}`);
 
         // Look up this.selectedOption as a value in the dropdownOptions array
         // If it exists, return the label
@@ -191,6 +247,11 @@ export default {
 
         Please be patient while this is looked into.
         `)
+
+
+        // Reload the page
+        window.location.reload();
+        
         // this.selectedOption = null;
         // this.reason = "";
         // this.solution = "";
@@ -223,39 +284,6 @@ export default {
         // );
       } 
     },
-    async submitRequest() {
-      // console.log(`${JSON.stringify(this.$data)}`);
-      if (!this.selectedOption) return this.$toast.warning("Please select a guild")
-      if (!this.reason) return this.$toast.warning("Please enter a reason for the ban. If you don't know why you were banned, say so.")
-      if (!this.solution) return this.$toast.warning("Please enter a solution for the problem.")
-      if (!this.future) return this.$toast.warning("Please enter a future plan to prevent this from happening again.")
-      if (!this.user) return this.$toast.warning("Please login to submit an appeal.")
-      if (this.email) {
-        // Verify that the email is in the correct format
-        // https://stackoverflow.com/a/46181/1366033
-        const emailRegex = /\S+@\S+\.\S+/;
-        if (!emailRegex.test(this.email)) {
-          return this.$toast.warning("Please enter a valid email")
-        }
-      }
-
-      const appealData = {
-        'guild': this.selectedOption,
-        'userId': this.user.id,
-        'username': this.user.username,
-        'discriminator': this.user.discriminator,
-        'avatar': this.avatar,
-        'reason': this.reason,
-        'solution': this.solution,
-        'future': this.future,
-        'extra': this.extra,
-        'email': this.email,
-      };
-
-      // console.log(JSON.stringify(appealData))
-
-      await this.sendAppeal(appealData);
-    },
   },
 };
 </script>
@@ -265,89 +293,118 @@ export default {
     <breadcrumbs :name="t('sidebar.banAppeal')" />
     <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
       <p class="text-xl mb-4">{{ t("sidebar.banAppeal") }}</p>
-      <label class="block text-sm" >
-        <div>
-          <span class="text-gray-700 dark:text-gray-400">{{
-                t("banAppeal.guild")
-              }}</span>
-          <select
-            class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-            v-model="selectedOption"
-          >
-            <option v-for="(option, index) in dropdownOptions" :key="index" :value="option.value">
-              {{ option.label }}
-            </option>
-            <option :value="null" disabled hidden>Select Guild</option>
-          </select>
+      <div v-if="isBanned">
+        <div v-if="!hasAppealed || (hasAppealed && !hasActiveAppeal)">
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400" v-for="(item, index) in t('banAppeal.instructions').split('\n')" :key="index">
+              {{ item }}<br/>
+            </span>
+          </label>
         </div>
-      </label>
-      <label class="block mt-4 text-sm">
-        <span class="text-gray-700 dark:text-gray-400">{{
-          t("banAppeal.reason")
-        }}</span>
-        <textarea
-          class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
-          rows="3"
-          :placeholder="t('banAppeal.reasonPlaceholder')"
-          v-model="reason"
-          maxlength="1000"
-        ></textarea>
-      </label>
-      <label class="block mt-4 text-sm">
-        <span class="text-gray-700 dark:text-gray-400">{{
-          t("banAppeal.solution")
-        }}</span>
-        <textarea
-          class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
-          rows="3"
-          :placeholder="t('banAppeal.solutionPlaceholder')"
-          v-model="solution"
-          maxlength="1000"
-        ></textarea>
-      </label>
-      <label class="block mt-4 text-sm">
-        <span class="text-gray-700 dark:text-gray-400">{{
-          t("banAppeal.future")
-        }}</span>
-        <textarea
-          class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
-          rows="3"
-          :placeholder="t('banAppeal.futurePlaceholder')"
-          v-model="future"
-          maxlength="1000"
-        ></textarea>
-      </label>
-      <label class="block mt-4 text-sm">
-        <span class="text-gray-700 dark:text-gray-400">{{
-          t("banAppeal.extra")
-        }}</span>
-        <textarea
-          class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
-          rows="3"
-          :placeholder="t('banAppeal.extraPlaceholder')"
-          v-model="extra"
-          maxlength="1000"
-        ></textarea>
-      </label>
-      <label class="block mt-4 text-sm">
-        <span class="text-gray-700 dark:text-gray-400">{{
-          t("banAppeal.email")
-        }}</span>
-        <textarea
-          class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
-          rows="3"
-          :placeholder="t('banAppeal.emailPlaceholder')"
-          v-model="email"
-        ></textarea>
-      </label>
-      <button
-        name="submit"
-        @click="submitRequest"
-        type="button"
-        class="mt-4 bg-red-500 hover:bg-red-600 focus:outline-none rounded-lg px-6 py-2 text-white font-semibold shadow"
-      >
-        {{ t("banAppeal.submit") }}
-      </button>
+        <div v-if="hasAppealed">
+          <div v-if="hasActiveAppeal">
+            <label class="block mt-4 text-sm">
+              <span class="text-gray-700 dark:text-gray-400">{{
+                t("banAppeal.hasActiveAppealed")
+              }}</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- <label class="block text-sm" >
+          <div>
+            <span class="text-gray-700 dark:text-gray-400">{{
+                  t("banAppeal.guild")
+                }}</span>
+            <select
+              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+              v-model="selectedOption"
+            >
+              <option v-for="(option, index) in dropdownOptions" :key="index" :value="option.value">
+                {{ option.label }}
+              </option>
+              <option :value="null" disabled hidden>Select Guild</option>
+            </select>
+          </div>
+        </label> -->
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400">{{
+            t("banAppeal.reason")
+          }}</span>
+          <textarea
+            class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
+            rows="3"
+            :placeholder="t('banAppeal.reasonPlaceholder')"
+            v-model="reason"
+            maxlength="1000"
+          ></textarea>
+        </label>
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400">{{
+            t("banAppeal.solution")
+          }}</span>
+          <textarea
+            class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
+            rows="3"
+            :placeholder="t('banAppeal.solutionPlaceholder')"
+            v-model="solution"
+            maxlength="1000"
+          ></textarea>
+        </label>
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400">{{
+            t("banAppeal.future")
+          }}</span>
+          <textarea
+            class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
+            rows="3"
+            :placeholder="t('banAppeal.futurePlaceholder')"
+            v-model="future"
+            maxlength="1000"
+          ></textarea>
+        </label>
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400">{{
+            t("banAppeal.extra")
+          }}</span>
+          <textarea
+            class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
+            rows="3"
+            :placeholder="t('banAppeal.extraPlaceholder')"
+            v-model="extra"
+            maxlength="1000"
+          ></textarea>
+        </label>
+        <!-- <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400">{{
+            t("banAppeal.email")
+          }}</span>
+          <textarea
+            class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
+            rows="3"
+            :placeholder="t('banAppeal.emailPlaceholder')"
+            v-model="email"
+          ></textarea>
+        </label> -->
+        
+        <div v-if="!hasAppealed || (hasAppealed && !hasActiveAppeal)">
+          <button
+            name="submit"
+            @click="sendAppeal"
+            type="button"
+            class="mt-4 bg-red-500 hover:bg-red-600 focus:outline-none rounded-lg px-6 py-2 text-white font-semibold shadow"
+          >
+            {{ t("banAppeal.submit") }}
+          </button>
+        </div>
+      </div>
+      <div v-if="!isBanned">
+        <label class="block mt-4 text-sm">
+          <span class="text-gray-700 dark:text-gray-400">{{
+            t("banAppeal.notBanned")
+          }}</span>
+        </label>
+      </div>
     </div>
   </div>
 </template>

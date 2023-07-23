@@ -1,7 +1,12 @@
 
 // Vue app
 import { createApp } from 'vue'
+// import { log } from './utils/log';
 import App from './App.vue'
+
+// const F = f(__filename);
+
+// log.info(F, `Started!`);
 
 // Pinia store
 import { createPinia } from 'pinia'
@@ -25,6 +30,10 @@ import './assets/css/main.css'
 
 // Tailwind
 import '@/assets/css/tailwind.css';
+
+import sourceMap from 'source-map-support';
+
+sourceMap.install();
 
 createApp(App)
     .use(createPinia())

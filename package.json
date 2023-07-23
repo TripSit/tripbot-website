@@ -7,7 +7,7 @@
     "npm": "9.6.6"
   },
   "scripts": {
-    "start": "docker compose up -d tripbot_website --force-recreate --build",
+    "start": "docker compose --project-name tripbot up -d tripbot_website --force-recreate --build",
     "logs": "docker container logs tripbot_website -f -n 100",
     "test": "docker exec -it tripbot_website jest --silent -c ./jest/jest.unit.config.ts",
     "lint": "docker exec -it tripbot_website eslint --fix --ext .ts,.js .",
@@ -43,21 +43,25 @@
     "color": "^4.2.3",
     "discord-api-types": "^0.37.42",
     "discord.js": "^14.11.0",
+    "dotenv": "^16.3.1",
     "pinia": "^2.0.36",
     "promise-polyfill": "^8.3.0",
+    "source-map-support": "^0.5.21",
     "underscore": "^1.13.6",
     "vue": "^3.3.2",
     "vue-i18n": "^9.3.0-beta.17",
     "vue-router": "^4.2.0",
     "vue-toast-notification": "^3.1.1",
     "vue3-sfc-transitions": "^1.0.4",
-    "vuex": "^4.1.0"
+    "vuex": "^4.1.0",
+    "winston": "^3.10.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
     "@tsconfig/node18": "^2.0.1",
     "@types/jsdom": "^21.1.1",
-    "@types/node": "^18.16.8",
+    "@types/node": "^18.16.19",
+    "@types/source-map-support": "^0.5.6",
     "@vitejs/plugin-vue": "^4.2.3",
     "@vitejs/plugin-vue-jsx": "^3.0.1",
     "@vue/eslint-config-prettier": "^7.1.0",

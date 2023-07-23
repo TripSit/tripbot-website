@@ -1,15 +1,32 @@
-const CLIENT_ID = import.meta.env.VITE_APP_CLIENT_ID;
+const DISCORD_GUILD_ID = import.meta.env.VITE_DISCORD_GUILD_ID;
+const DISCORD_CLIENT_ID = import.meta.env.VITE_DISCORD_CLIENT_ID;
+const DISCORD_CLIENT_SECRET = import.meta.env.VITE_DISCORD_CLIENT_SECRET;
+const DISCORD_CLIENT_REDIRECT_URI = import.meta.env.VITE_DISCORD_CLIENT_REDIRECT_URI;
+const DISCORD_CLIENT_TOKEN = import.meta.env.VITE_DISCORD_CLIENT_TOKEN;
+
 const BOT_API = import.meta.env.VITE_APP_BOT_API;
-const USERNAME = import.meta.env.VITE_APP_USERNAME;
-const PASSWORD = import.meta.env.VITE_APP_PASSWORD;
+const DNS_DOMAIN = import.meta.env.DNS_DOMAIN;
+const BOT_DOMAIN = import.meta.env.VITE_BOT_DOMAIN;
+
+const DB_API_USERNAME = import.meta.env.VITE_DB_API_USERNAME;
+const DB_API_PASSWORD = import.meta.env.VITE_DB_API_PASSWORD;
+const TB_API_USERNAME = import.meta.env.VITE_TB_API_USERNAME;
+const TB_API_PASSWORD = import.meta.env.VITE_TB_API_PASSWORD;
 
 export default {
     home: `${window.location.origin}/`,
-    clientId: CLIENT_ID || "",
+    discordGuildId: DISCORD_GUILD_ID || "",
+    discordClientId: DISCORD_CLIENT_ID || "",
+    discordClientSecret: DISCORD_CLIENT_SECRET || "",
+    discordClientRedirect: DISCORD_CLIENT_REDIRECT_URI || "",
+    discordClientToken: DISCORD_CLIENT_TOKEN || "",
     botApi: BOT_API || "",
-    username: USERNAME,
-    password: PASSWORD,
-    tripbotApi: "https://api.tripsit.me",
+    dbApiUsername: DB_API_USERNAME,
+    dbApiPassword: DB_API_PASSWORD,
+    tbApiUsername: TB_API_USERNAME,
+    tbApiPassword: TB_API_PASSWORD,
+    databaseApi: `https://api.${DNS_DOMAIN}`,
+    tripbotApi: `https://api.${BOT_DOMAIN}`,
     discordApi: "https://discord.com/api",
     discordCdn: "https://cdn.discordapp.com",
     githubHome: "https://github.com/TripSit/TripBot",

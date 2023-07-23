@@ -15,8 +15,22 @@ import config from "@/config";
 import fetch from "@/utils/fetch";
 import { useUserStore } from '@/stores/useUserStore'
 import { useI18n } from 'vue-i18n'
+import { type Users, type Appeals } from '../types/database.d'
 
 import Breadcrumbs from "@/components/BreadcrumbComponent.vue";
+
+type Appeal = {
+      guild: string;
+      userId: string;
+      username: string;
+      discriminator: string;
+      avatar: string;
+      reason: string;
+      solution: string;
+      future: string;
+      extra: string;
+      email: string;
+    }
 
 export default {
   name: "banAppeal",
@@ -65,95 +79,149 @@ export default {
     },
   },
   methods: {
-    async sendAppeal(appealData) {
-      // console.log(appealData)
-      // console.log(this.user.id)
-      // This function handles sending the appeal, including errors
-      // The only error that should happen is if the bot happens to be down for whatever reason
-      // In this case, we want to keep retrying the request for 1 minute
-      // If it fails after 1 minute, then the bot is down for good, and we should tell the user to try again later
-      // This request should be retried 5 times before giving up
-      // This request should be retried every 10 seconds
-      fetch(
-        "https://localhost:1887/appeal",
-        {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            "Content-Type": 'application/json',
-            'Authorization': `Basic ${config.username + ":" + config.password}`,
-          },
-          body: JSON.stringify(appealData),
-        }
-      )
-        // .then(response => response.json())
-        .then(response => {
-          // console.log(JSON.stringify(response, null, 2))
+    async sendAppeal(newAppealData:Appeal) {
+      try {
+        // console.log(`newAppealData: ${JSON.stringify(newAppealData, null, 2)}`)
+        // This function handles sending the appeal, including errors
+        // It will query the database and then send a payload to tripbot to either create or update the appeal
+        // The database queries look like:
+        // + Get the user info
+        // - If the user doesn't exist, end
+        // - If the user does exist, continue
+        // + Get if the user has an appeal in the database
+        // - If no, continue
+        // - If yes, check when the appeal was submitted, the status of the appeal, and the number of appeals
+        // -- If the status of the appeal is "OPEN"
+        // --- If this appeal was submitted less than 48 hours ago, return that they need to wait.
+        // --- If this appeal was submitted more than 48 hours ago, send a reminder to the appeal thread.
+        // -- If the status of the appeal is "RECEIVED"
+        // --- If this appeal was submitted less than 7 days ago, return that they need to wait.
+        // --- If this appeal was submitted more than 7 days ago, send a reminder to the appeal thread. 
+        // -- If the status of the appeal is "ACCEPTED", let the user know that they have been unbanned!
+        // -- If the status of the appeal is "DENIED"
+        // --- If this is appeal X, let them know they can appeal again in X months.
+        // = Send the appeal to tripbot
 
-          if (response.status !== 200) {
-            if (response.status === 500) {
-              this.$toast.error(
-                "The bot is down, please try again later."
-              )
-              return;
-            }
-            if (response.status === 418) {
-              this.$toast.error(`Failed to send appeal, you are not banned from this guild!`)
-              return;
-            }
-            this.$toast.error(`Failed to send appeal: ${response.status} ${response.statusText}`)
-            return;
-          }
-
-          // console.log(this.options)
-
-          // Look up this.selectedOption as a value in the dropdownOptions array
-          // If it exists, return the label
-          // If it doesn't exist, return the value 
-          const guildOption = this.dropdownOptions.find(option => option.value === this.selectedOption) as {
-              label: string;
-              value: string;
-          }
-
-          this.$toast.success(`
-          Thank you! We've submitted this appeal to ${guildOption.label}.<br>
-
-          Each guild has different response times, please be patient while this is looked into.
-          `)
-          // this.selectedOption = null;
-          // this.reason = "";
-          // this.solution = "";
-          // this.future = "";
-          // this.extra = "";
-          // this.email = "";
-          // this.selectedOption = '960606557622657026';
-          // this.reason = "Reason";
-          // this.solution = "Solution";
-          // this.future = "Future";
-          // this.extra = "Extra";
-          // this.email = "test@test.com";
-        })
-        .catch((e) => {
-          this.attempt++;
-          console.debug(`Failed attempt ${this.attempt} to send appeal: ${e}`);
-          if (this.attempt >= 5) {
-            this.$toast.error(
-              "Failed to send ban appeal, the bot may be down, please try again later. If this persists, please contact us on discord!"
-            )
-            return;
-          }
-          this.$toast.warning(
-            `Failed attempt ${this.attempt} to send ban appeal, retrying in 10 seconds!`
-          )
-          setTimeout(
-            async () => {
-              this.sendAppeal(appealData);
+        const userApiResponse = await fetch(
+          "http://localhost:5000/v2/users/" + this.user?.id,
+          {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              "Content-Type": 'application/json',
+              'Authorization': `Basic ${btoa(`${config.dbApiUsername}:${config.dbApiPassword}`)}`,
             },
-            1000 * 10,
-          );
-        }
+            // body: JSON.stringify(appealData),
+          }
         );
+        const userData = await userApiResponse.json() as Users;
+        // console.log(`userData: ${JSON.stringify(userData, null, 2)}`);
 
+        const appealApiResponse = await fetch(
+          "http://localhost:5000/v2/appeals/" + userData.id,
+          {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              "Content-Type": 'application/json',
+              'Authorization': `Basic ${btoa(`${config.dbApiUsername}:${config.dbApiPassword}`)}`,
+            },
+            // body: JSON.stringify(appealData),
+          }
+        )
+        const appealData = await appealApiResponse.json() as Appeals[];
+        // console.log(`appealData: ${JSON.stringify(appealData, null, 2)}`);
+        
+        if (appealData.length > 0) {
+          this.$toast.success(`You already have an existing appeal!`)
+        }
+
+        const discordApiResponse = await fetch(
+          "http://localhost:5000/v2/discord/bans/" + this.user?.id,
+          {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              "Content-Type": 'application/json',
+              'Authorization': `Basic ${btoa(`${config.dbApiUsername}:${config.dbApiPassword}`)}`,
+            },
+            // body: JSON.stringify(appealData),
+          }
+        )
+        const banData = await discordApiResponse.json();
+        // console.log(`banData: ${JSON.stringify(banData, null, 2)}`);
+
+        if (banData.message === 'Unknown Ban') {
+          this.$toast.success(`You are not currently banned!`)
+          return;
+        }
+
+        const appealPayload = {
+          newAppealData,
+          userData,
+          appealData,
+          banData,
+        }
+
+        const tripbotApiResponse = await fetch(
+          "http://localhost:1337/api/v1/appeals/",
+          {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              "Content-Type": 'application/json',
+              'Authorization': `Basic ${btoa(`${config.tbApiUsername}:${config.tbApiPassword}`)}`,
+            },
+            body: JSON.stringify(appealPayload),
+          }
+        )
+        const tripbotData = await tripbotApiResponse.json();
+        console.log(`tripbotData: ${JSON.stringify(tripbotData, null, 2)}`);
+
+        // Look up this.selectedOption as a value in the dropdownOptions array
+        // If it exists, return the label
+        // If it doesn't exist, return the value 
+        // const guildOption = this.dropdownOptions.find(option => option.value === this.selectedOption) as {
+        //     label: string;
+        //     value: string;
+        // }
+
+        this.$toast.success(`
+        Thank you! We've submitted this appeal to TripSit.<br>
+
+        Please be patient while this is looked into.
+        `)
+        // this.selectedOption = null;
+        // this.reason = "";
+        // this.solution = "";
+        // this.future = "";
+        // this.extra = "";
+        // this.email = "";
+        // this.selectedOption = '960606557622657026';
+        // this.reason = "Reason";
+        // this.solution = "Solution";
+        // this.future = "Future";
+        // this.extra = "Extra";
+        // this.email = "test@test.com";
+      } catch (e) {
+        this.attempt++;
+        console.debug(`Failed attempt ${this.attempt} to send appeal: ${e}`);
+        if (this.attempt >= 5) {
+          this.$toast.error(
+            "Failed to send ban appeal, the bot may be down, please try again later. If this persists, please contact us on discord!"
+          )
+          return;
+        }
+        this.$toast.warning(
+          `Failed attempt ${this.attempt} to send ban appeal, retrying in 10 seconds!`
+        )
+        // setTimeout(
+        //   async () => {
+        //     this.sendAppeal(newAppealData);
+        //   },
+        //   1000 * 10,
+        // );
+      } 
     },
     async submitRequest() {
       // console.log(`${JSON.stringify(this.$data)}`);

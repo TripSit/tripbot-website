@@ -45,6 +45,7 @@
         "notBanned": "You are not currently banned from TripSit! Congrats!",
         "hasActiveAppealed": "You have already appealed this ban, please wait for a response from the team! This will take at least 24 hours, but may take longer.",
         "hasAppealedBefore": "This account has appealed a ban before, you can try again, but if the situation has not changed, don't expect the outcome to change.",
+        "notLoggedIn": "In order for us to verify which account you're appealing for, we need you to login to Discord.\n\nWhen you click the login link you'll be taken to Discord where you will login, and Discord will tell us very basic information about your Discord account.\nYou can verify what information is sent to us before sending it.\nWe will not be able to see any of your messages, or any other information about your account, only your username, ID, and avatar.\n\nAll of this information is available to anyone who can see you in a Discord server, so there's no risk here.\n\nIf you have any questions, please reach out to us on Discord.",
         "submit": "Submit",
         "guild": "Guild",
         "guildPlaceholder": "TripSit",

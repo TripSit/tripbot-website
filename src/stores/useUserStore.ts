@@ -88,10 +88,10 @@ export const useUserStore = defineStore('user', {
               .then((response) => {
                   if (response.code === 0) {
                       const loginParams = {
-                          client_id: config.clientId,
+                          client_id: config.discordClientId,
                           redirect_uri: `${config.home}dashboard/home`,
                           response_type: "token",
-                          scope: "identify guilds",
+                          scope: "identify",
                           state: this.stateParam as string,
                       };
                       window.location.replace(`${config.discordApi}/oauth2/authorize${queryString(loginParams)}`);

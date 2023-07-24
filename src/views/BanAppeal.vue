@@ -79,6 +79,7 @@ export default {
   computed: {
     ...mapState(useUserStore, [
       "user",
+      "ifAuthenticated",
     ]),
     avatar() {
       return this.user
@@ -219,7 +220,7 @@ export default {
           banData,
         }
 
-        const tripbotApiResponse = await fetch(
+        await fetch(
           "http://localhost:1337/api/v1/appeals/",
           {
             method: 'POST',
@@ -293,116 +294,125 @@ export default {
     <breadcrumbs :name="t('sidebar.banAppeal')" />
     <div class="px-4 py-3 mb-8 bg-white rounded-lg shadow-md dark:bg-gray-800">
       <p class="text-xl mb-4">{{ t("sidebar.banAppeal") }}</p>
-      <div v-if="isBanned">
-        <div v-if="!hasAppealed || (hasAppealed && !hasActiveAppeal)">
-          <label class="block mt-4 text-sm">
-            <span class="text-gray-700 dark:text-gray-400" v-for="(item, index) in t('banAppeal.instructions').split('\n')" :key="index">
-              {{ item }}<br/>
-            </span>
-          </label>
-        </div>
-        <div v-if="hasAppealed">
-          <div v-if="hasActiveAppeal">
+      <div v-if="ifAuthenticated">
+        <div v-if="isBanned">
+          <div v-if="!hasAppealed || (hasAppealed && !hasActiveAppeal)">
             <label class="block mt-4 text-sm">
-              <span class="text-gray-700 dark:text-gray-400">{{
-                t("banAppeal.hasActiveAppealed")
-              }}</span>
+              <span class="text-gray-700 dark:text-gray-400" v-for="(item, index) in t('banAppeal.instructions').split('\n')" :key="index">
+                {{ item }}<br/>
+              </span>
             </label>
           </div>
-        </div>
-
-        <!-- <label class="block text-sm" >
-          <div>
-            <span class="text-gray-700 dark:text-gray-400">{{
-                  t("banAppeal.guild")
+          <div v-if="hasAppealed">
+            <div v-if="hasActiveAppeal">
+              <label class="block mt-4 text-sm">
+                <span class="text-gray-700 dark:text-gray-400">{{
+                  t("banAppeal.hasActiveAppealed")
                 }}</span>
-            <select
-              class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
-              v-model="selectedOption"
-            >
-              <option v-for="(option, index) in dropdownOptions" :key="index" :value="option.value">
-                {{ option.label }}
-              </option>
-              <option :value="null" disabled hidden>Select Guild</option>
-            </select>
+              </label>
+            </div>
           </div>
-        </label> -->
-        <label class="block mt-4 text-sm">
-          <span class="text-gray-700 dark:text-gray-400">{{
-            t("banAppeal.reason")
-          }}</span>
-          <textarea
-            class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
-            rows="3"
-            :placeholder="t('banAppeal.reasonPlaceholder')"
-            v-model="reason"
-            maxlength="1000"
-          ></textarea>
-        </label>
-        <label class="block mt-4 text-sm">
-          <span class="text-gray-700 dark:text-gray-400">{{
-            t("banAppeal.solution")
-          }}</span>
-          <textarea
-            class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
-            rows="3"
-            :placeholder="t('banAppeal.solutionPlaceholder')"
-            v-model="solution"
-            maxlength="1000"
-          ></textarea>
-        </label>
-        <label class="block mt-4 text-sm">
-          <span class="text-gray-700 dark:text-gray-400">{{
-            t("banAppeal.future")
-          }}</span>
-          <textarea
-            class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
-            rows="3"
-            :placeholder="t('banAppeal.futurePlaceholder')"
-            v-model="future"
-            maxlength="1000"
-          ></textarea>
-        </label>
-        <label class="block mt-4 text-sm">
-          <span class="text-gray-700 dark:text-gray-400">{{
-            t("banAppeal.extra")
-          }}</span>
-          <textarea
-            class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
-            rows="3"
-            :placeholder="t('banAppeal.extraPlaceholder')"
-            v-model="extra"
-            maxlength="1000"
-          ></textarea>
-        </label>
-        <!-- <label class="block mt-4 text-sm">
-          <span class="text-gray-700 dark:text-gray-400">{{
-            t("banAppeal.email")
-          }}</span>
-          <textarea
-            class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
-            rows="3"
-            :placeholder="t('banAppeal.emailPlaceholder')"
-            v-model="email"
-          ></textarea>
-        </label> -->
-        
-        <div v-if="!hasAppealed || (hasAppealed && !hasActiveAppeal)">
-          <button
-            name="submit"
-            @click="sendAppeal"
-            type="button"
-            class="mt-4 bg-red-500 hover:bg-red-600 focus:outline-none rounded-lg px-6 py-2 text-white font-semibold shadow"
-          >
-            {{ t("banAppeal.submit") }}
-          </button>
+  
+          <!-- <label class="block text-sm" >
+            <div>
+              <span class="text-gray-700 dark:text-gray-400">{{
+                    t("banAppeal.guild")
+                  }}</span>
+              <select
+                class="block w-full mt-1 text-sm dark:border-gray-600 dark:bg-gray-700 focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:text-gray-300 dark:focus:shadow-outline-gray form-input"
+                v-model="selectedOption"
+              >
+                <option v-for="(option, index) in dropdownOptions" :key="index" :value="option.value">
+                  {{ option.label }}
+                </option>
+                <option :value="null" disabled hidden>Select Guild</option>
+              </select>
+            </div>
+          </label> -->
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400">{{
+              t("banAppeal.reason")
+            }}</span>
+            <textarea
+              class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
+              rows="3"
+              :placeholder="t('banAppeal.reasonPlaceholder')"
+              v-model="reason"
+              maxlength="1000"
+            ></textarea>
+          </label>
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400">{{
+              t("banAppeal.solution")
+            }}</span>
+            <textarea
+              class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
+              rows="3"
+              :placeholder="t('banAppeal.solutionPlaceholder')"
+              v-model="solution"
+              maxlength="1000"
+            ></textarea>
+          </label>
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400">{{
+              t("banAppeal.future")
+            }}</span>
+            <textarea
+              class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
+              rows="3"
+              :placeholder="t('banAppeal.futurePlaceholder')"
+              v-model="future"
+              maxlength="1000"
+            ></textarea>
+          </label>
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400">{{
+              t("banAppeal.extra")
+            }}</span>
+            <textarea
+              class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
+              rows="3"
+              :placeholder="t('banAppeal.extraPlaceholder')"
+              v-model="extra"
+              maxlength="1000"
+            ></textarea>
+          </label>
+          <!-- <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400">{{
+              t("banAppeal.email")
+            }}</span>
+            <textarea
+              class="block w-full mt-1 text-sm dark:text-gray-300 dark:border-gray-600 dark:bg-gray-700 form-textarea focus:border-blue-400 focus:outline-none focus:shadow-outline-blue dark:focus:shadow-outline-gray"
+              rows="3"
+              :placeholder="t('banAppeal.emailPlaceholder')"
+              v-model="email"
+            ></textarea>
+          </label> -->
+          
+          <div v-if="!hasAppealed || (hasAppealed && !hasActiveAppeal)">
+            <button
+              name="submit"
+              @click="sendAppeal"
+              type="button"
+              class="mt-4 bg-red-500 hover:bg-red-600 focus:outline-none rounded-lg px-6 py-2 text-white font-semibold shadow"
+            >
+              {{ t("banAppeal.submit") }}
+            </button>
+          </div>
+        </div>
+        <div v-else>
+          <label class="block mt-4 text-sm">
+            <span class="text-gray-700 dark:text-gray-400">{{
+              t("banAppeal.notBanned")
+            }}</span>
+          </label>
         </div>
       </div>
-      <div v-if="!isBanned">
+      <div v-else>
         <label class="block mt-4 text-sm">
-          <span class="text-gray-700 dark:text-gray-400">{{
-            t("banAppeal.notBanned")
-          }}</span>
+          <span class="text-gray-700 dark:text-gray-400" v-for="(item, index) in t('banAppeal.notLoggedIn').split('\n')" :key="index">
+            {{ item }}<br/>
+          </span>
         </label>
       </div>
     </div>

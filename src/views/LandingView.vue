@@ -20,7 +20,7 @@ export default {
       "stateParam", 
       "ifAuthenticated"
     ]),
-    state():string {
+    state():string | null {
       return this.stateParam
     },
     username() {
@@ -35,10 +35,10 @@ export default {
     },
     loginUrl():string {
       const loginParams = {
-        client_id: config.clientId,
+        client_id: config.discordClientId,
         redirect_uri: config.home,
         response_type: "token",
-        scope: "identify guilds",
+        scope: "identify",
         state: this.stateParam as string,
       };
       return `${config.discordApi}/oauth2/authorize${queryString(loginParams)}`;
@@ -46,7 +46,8 @@ export default {
   },
   data() {
     return {
-      botUrl: `https://discord.com/api/oauth2/authorize?client_id=${config.clientId}&permissions=18432&scope=bot%20applications.commands`,
+      cdn: config.discordCdn,
+      botUrl: `${config.discordApi}/oauth2/authorize?client_id=${config.discordClientId}&permissions=18432&scope=bot%20applications.commands`,
     };
   },
 };

@@ -9,17 +9,12 @@
   "scripts": {
     "start": "docker compose --project-name tripbot up -d tripbot_website --force-recreate --build",
     "logs": "docker container logs tripbot_website -f -n 100",
-    "test": "docker exec -it tripbot_website jest --silent -c ./jest/jest.unit.config.ts",
-    "lint": "docker exec -it tripbot_website eslint --fix --ext .ts,.js .",
-    "deploy": "docker exec -it tripbot_website ts-node --transpile-only ./src/discord/utils/commandDeploy.ts",
-    "stop": "docker stop tripbot_website",
+    "test": "docker exec -it tripbot_website npx jest --silent -c ./jest/jest.unit.config.ts",
+    "lint": "docker exec -it tripbot_website npx eslint . --fix --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix",
     "# Legacy #": "",
-    "preview": "docker exec -it tripbot_website npx vite preview",
     "test:unit": "docker exec -it tripbot_website npx vitest",
     "test:e2e": "docker exec -it tripbot_website npx start-server-and-test preview http://localhost:4173 'cypress run --e2e'",
-    "test:e2e:dev": "docker exec -it tripbot_website npx start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'",
-    "legacy-lint": "docker exec -it tripbot_website npx eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "docker exec -it tripbot_website npx prettier --write src/"
+    "test:e2e:dev": "docker exec -it tripbot_website npx start-server-and-test 'vite dev --port 4173' http://localhost:4173 'cypress open --e2e'"
   },
   "repository": {
     "type": "git",

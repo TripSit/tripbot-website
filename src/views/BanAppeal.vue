@@ -86,74 +86,6 @@ export default {
         ? `${this.cdn}/avatars/${this.user.id}/${this.user.avatar}.png`
         : "";
     },
-    async userData() {
-      const userApiResponse = await fetch(
-          "http://localhost:5000/v2/users/" + this.user?.id,
-          {
-            method: 'GET',
-            headers: {
-              'Accept': 'application/json',
-              "Content-Type": 'application/json',
-              'Authorization': `Basic ${btoa(`${config.dbApiUsername}:${config.dbApiPassword}`)}`,
-            },
-            // body: JSON.stringify(appealData),
-          }
-        );
-        const userData = await userApiResponse.json() as Users;
-        // console.log(`userData: ${JSON.stringify(userData, null, 2)}`);
-        return userData;
-    },
-    async appealData() {
-      const appealApiResponse = await fetch(
-          "http://localhost:5000/v2/appeals/" + (await this.userData).id,
-          {
-            method: 'GET',
-            headers: {
-              'Accept': 'application/json',
-              "Content-Type": 'application/json',
-              'Authorization': `Basic ${btoa(`${config.dbApiUsername}:${config.dbApiPassword}`)}`,
-            },
-            // body: JSON.stringify(appealData),
-          }
-        )
-        const appealData = await appealApiResponse.json() as Appeals[];
-        if (appealData.length > 0) {
-          this.hasAppealed = true
-          console.log(`User has appealed: ${this.hasAppealed}`)
-          const activeAppeal = appealData.find(appeal => appeal.status === 'OPEN' || appeal.status === 'RECEIVED');
-          if (activeAppeal) {
-            this.hasActiveAppeal = true
-            this.reason = activeAppeal.reason;
-            this.solution = activeAppeal.solution;
-            this.future = activeAppeal.future;
-            this.extra = activeAppeal.extra === null ? undefined : appealData[0].extra as string;
-          }
-          // console.log(`appealData: ${JSON.stringify(appealData, null, 2)}`);
-        }
-
-        return appealData;
-    },
-    async discordBan() {
-      const discordApiResponse = await fetch(
-          "http://localhost:5000/v2/discord/bans/" + this.user?.id,
-          {
-            method: 'GET',
-            headers: {
-              'Accept': 'application/json',
-              "Content-Type": 'application/json',
-              'Authorization': `Basic ${btoa(`${config.dbApiUsername}:${config.dbApiPassword}`)}`,
-            },
-            // body: JSON.stringify(appealData),
-          }
-        )
-        const banData = await discordApiResponse.json();
-        // console.log(`banData: ${JSON.stringify(banData, null, 2)}`);
-        this.isBanned = banData.message !== 'Unknown Ban';
-        return banData;
-    },
-    async submitAppeal() {
-      
-    },
   },
   methods: {
     async sendAppeal() {
@@ -284,6 +216,76 @@ export default {
         //   1000 * 10,
         // );
       } 
+    },
+    
+    async userData() {
+      const userApiResponse = await fetch(
+          "http://localhost:5000/v2/users/" + this.user?.id,
+          {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              "Content-Type": 'application/json',
+              'Authorization': `Basic ${btoa(`${config.dbApiUsername}:${config.dbApiPassword}`)}`,
+            },
+            // body: JSON.stringify(appealData),
+          }
+        );
+        const userData = await userApiResponse.json() as Users;
+        // console.log(`userData: ${JSON.stringify(userData, null, 2)}`);
+        return userData;
+    },
+    async appealData() {
+      const userData = await this.userData();
+      const appealApiResponse = await fetch(
+          "http://localhost:5000/v2/appeals/" + userData.id,
+          {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              "Content-Type": 'application/json',
+              'Authorization': `Basic ${btoa(`${config.dbApiUsername}:${config.dbApiPassword}`)}`,
+            },
+            // body: JSON.stringify(appealData),
+          }
+        )
+        const appealData = await appealApiResponse.json() as Appeals[];
+        if (appealData.length > 0) {
+          this.hasAppealed = true
+          console.log(`User has appealed: ${this.hasAppealed}`)  
+          const activeAppeal = appealData.find(appeal => appeal.status === 'OPEN' || appeal.status === 'RECEIVED');
+          if (activeAppeal) {
+            this.hasActiveAppeal = true
+            this.reason = activeAppeal.reason;
+            this.solution = activeAppeal.solution;
+            this.future = activeAppeal.future;
+            this.extra = activeAppeal.extra === null ? undefined : appealData[0].extra as string;
+          }
+          // console.log(`appealData: ${JSON.stringify(appealData, null, 2)}`);
+        }
+
+        return appealData;
+    },
+    async discordBan() {
+      const discordApiResponse = await fetch(
+          "http://localhost:5000/v2/discord/bans/" + this.user?.id,
+          {
+            method: 'GET',
+            headers: {
+              'Accept': 'application/json',
+              "Content-Type": 'application/json',
+              'Authorization': `Basic ${btoa(`${config.dbApiUsername}:${config.dbApiPassword}`)}`,
+            },
+            // body: JSON.stringify(appealData),
+          }
+        )
+        const banData = await discordApiResponse.json();
+        // console.log(`banData: ${JSON.stringify(banData, null, 2)}`);
+        this.isBanned = banData.message !== 'Unknown Ban';
+        return banData;
+    },
+    async submitAppeal() {
+      
     },
   },
 };

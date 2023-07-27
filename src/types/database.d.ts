@@ -29,7 +29,7 @@ export enum DrugCategoryType {
 export enum DrugMassUnit {
   Mg = "MG",
   Ml = "ML",
-  G = "µG",
+  uG = "µG",
   G = "G",
   Oz = "OZ",
   Floz = "FLOZ",

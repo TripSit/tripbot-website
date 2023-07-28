@@ -51,10 +51,10 @@ export default {
     },
     loginUrl() {
       const loginParams = {
-        client_id: config.clientId,
+        client_id: config.discordClientId,
         redirect_uri: `${config.home}dashboard/home`,
         response_type: "token",
-        scope: "identify guilds",
+        scope: "identify",
         state: this.stateParam as string,
       };
       return `${config.discordApi}/oauth2/authorize${queryString(loginParams)}`;

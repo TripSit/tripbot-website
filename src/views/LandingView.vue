@@ -13,29 +13,41 @@ export default {
     return {t, userStore};
   },
   computed: {
-    ...mapState(useUserStore, ["user", "stateParam", "ifAuthenticated"]),
-    state():string {
-      return this.stateParam as string;
+    ...mapState(useUserStore, [
+      "sideBarOpen",
+      "dark",
+      "user", 
+      "stateParam", 
+      "ifAuthenticated"
+    ]),
+    state():string | null {
+      return this.stateParam
     },
-    username():string {
-      return this.userStore.user
-        ? `${this.userStore.user.username}#${this.userStore.user.discriminator}`
+    username() {
+      return this.user
+        ? `${this.user.username}#${this.user.discriminator}`
         : "Anonymous";
+    },
+    avatar() {
+      return this.user
+        ? `${this.cdn}/avatars/${this.user.id}/${this.user.avatar}.png`
+        : "";
     },
     loginUrl():string {
       const loginParams = {
-        client_id: config.clientId,
+        client_id: config.discordClientId,
         redirect_uri: config.home,
         response_type: "token",
-        scope: "identify guilds",
-        state: JSON.stringify(this.userStore.user),
+        scope: "identify",
+        state: this.stateParam as string,
       };
       return `${config.discordApi}/oauth2/authorize${queryString(loginParams)}`;
     },
   },
   data() {
     return {
-      botUrl: `https://discord.com/api/oauth2/authorize?client_id=${config.clientId}&permissions=18432&scope=bot%20applications.commands`,
+      cdn: config.discordCdn,
+      botUrl: `${config.discordApi}/oauth2/authorize?client_id=${config.discordClientId}&permissions=18432&scope=bot%20applications.commands`,
     };
   },
 };

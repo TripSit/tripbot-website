@@ -18,7 +18,7 @@ export default {
   },
   data() {
     return {
-      botUrl: `https://discord.com/api/oauth2/authorize?client_id=${config.clientId}&permissions=18432&scope=bot%20applications.commands`,
+      botUrl: `https://discord.com/api/oauth2/authorize?client_id=${config.discordClientId}&permissions=18432&scope=bot%20applications.commands`,
       cdn: config.discordCdn,
     };
   },

@@ -36,7 +36,7 @@ services:
       - "5173:5173"
     networks:
       - tripbot_website-net
-      - database_api-net
+      - tripbot_api-net
       - tripbot-net
     env_file:
       - .env
@@ -52,7 +52,7 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
     labels:
-    - com.centurylinklabs.watchtower.enable=true
+    - com.centurylinklabs.watchtower.enable=false
     - traefik.enable=true
     - traefik.docker.network=tripbot_website-net
     - traefik.http.services.tripbot_website-svc.loadbalancer.server.port=5173
@@ -67,8 +67,8 @@ services:
 networks: 
   tripbot_website-net:
     name: tripbot_website-net
-  database_api-net:
-    name: database_api-net
+  tripbot_api-net:
+    name: tripbot_api-net
     external: true
   tripbot-net:
     name: tripbot-net

@@ -5,7 +5,6 @@ import Dashboard from '@/layouts/Dashboard.vue';
 import HomePage from '@/views/HomePage.vue'
 import BanAppeal from '@/views/BanAppeal.vue';
 // import NotFound from '@/views/NotFound.vue';
-import HelpWanted from '@/views/HelpWanted.vue';
 
 const router = createRouter({
   history: createWebHistory(),
@@ -34,11 +33,6 @@ const router = createRouter({
           path: 'appeals',
           name: 'BanAppeal',
           component: BanAppeal
-        },
-        {
-          path: 'volunteer',
-          name: 'Volunteer',
-          component: HelpWanted
         },
       ],
     },

@@ -2,7 +2,7 @@
 # BUILD FOR LOCAL DEVELOPMENT
 ###################
 
-FROM node:20.5 AS development
+FROM node:20.8 AS development
 
 ENV TZ="America/Chicago"
 ENV NODE_ENV=development
@@ -33,7 +33,7 @@ COPY --chown=node:node . .
 # BUILD FOR PRODUCTION
 ###################
 
-FROM node:20.5-alpine AS build
+FROM node:20.8-alpine AS build
 
 ENV TZ="America/Chicago"
 ENV NODE_ENV=production
